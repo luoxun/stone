@@ -1,5 +1,5 @@
 <?php
-namespace Stone\FastCGI;
+namespace Qufenqi\Stone\FastCGI;
 
 use swoole_server;
 

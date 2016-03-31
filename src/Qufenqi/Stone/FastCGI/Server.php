@@ -1,10 +1,11 @@
 <?php
-namespace Stone\FastCGI;
+namespace Qufenqi\Stone\FastCGI;
 
 use Exception;
 use swoole_server;
-use Stone\FastCGI\Protocol as FastCGI;
-use Stone\FastCGI\Connection as FastCGIConnection;
+use Qufenqi\Stone\FastCGI\Protocol as FastCGI;
+use Qufenqi\Stone\FastCGI\Connection as FastCGIConnection;
+use Qufenqi\Stone\Contracts\RequestHandler as RequestHandler;
 
 class Server
 {
@@ -12,17 +13,18 @@ class Server
 
     private $commitId = null;
 
-    private $app;
+    private $handler;
 
-    public function __construct($config)
+    public function __construct($config, RequestHandler $handler)
     {
         $this->config = $config;
+        $this->handler = $handler;
     }
 
     public function start()
     {
         if ($this->isRunning()) {
-            throw new Exception('服务已经启动');
+            throw new Exception('It seems that the server is running.');
         }
 
         $config = $this->config;
@@ -37,6 +39,7 @@ class Server
             'package_eof' => $config['package_eof'],
             'log_file' => $config['log_file'],
         ));
+
         $serv->on('Start', [$this, 'onStart']);
         $serv->on('Connect', [$this, 'onConnect']);
         $serv->on('Receive', [$this, 'onReceive']);
@@ -54,7 +57,7 @@ class Server
     public function stop()
     {
         if (!$this->isRunning()) {
-            throw new Exception('服务未启动');
+            throw new Exception('Server is not running');
         }
 
         $pid = $this->getMainPid();
@@ -67,7 +70,7 @@ class Server
     public function reload()
     {
         if (!$this->isRunning()) {
-            throw new Exception('服务未启动');
+            throw new Exception('Server is not running');
         }
 
         $pid = $this->getMainPid();
@@ -99,7 +102,7 @@ class Server
         $res = file_put_contents($this->config['pid'], $pid);
 
         if ($res === false) {
-            throw new Exception('写入进程文件失败， 请用超级用户执行');
+            throw new Exception('Write pid file failure, Maybe you need to run with super user.');
         }
     }
 
@@ -136,8 +139,6 @@ class Server
     public function onWorkerStart(swoole_server $server, $worker_id)
     {
         opcache_reset();
-        require '/home/chunfang/qufenqi/bootstrap/autoload.php';
-        $this->app = require_once '/home/chunfang/qufenqi/bootstrap/start.php';
 
         if ($worker_id >= $server->setting['worker_num']) {
             swoole_set_process_name($this->config['process_name'] . ':tasker');
@@ -153,13 +154,13 @@ class Server
         $requestData = $fastCGI->readFromString($data);
         $request = current($requestData);
         $_SERVER = $request['params'];
-        $_SERVER['RUNENV'] = 'local';
         $_COOKIE = $_POST = $_GET = $REQUEST = [];
 
         if (!empty($_SERVER['QUERY_STRING'])) {
             parse_str($_SERVER['QUERY_STRING'], $_GET);
         }
 
+        /*
         if (!empty($_SERVER['HTTP_COOKIE'])) {
             $cookies = explode('; ', $_SERVER['HTTP_COOKIE']);
             foreach ($cookies as $item) {
@@ -169,13 +170,14 @@ class Server
                 }
             }
         }
+        */
 
-        $_REQUEST = array_merge($_GET, $_POST);
+        //$_REQUEST = array_merge($_GET, $_POST);
 
         try {
-            $content = $this->app->render();
-        } catch (\Exception $e) {
-            $content = "\n\r\n\r系统繁忙";
+            $content = $this->handler->process($_SERVER['REQUEST_URI'], $_GET);
+        } catch (Exception $e) {
+            $content = "\n\r\n\r" . $e->getMessage();
         }
 
         $fastCGI->sendDataToClient(1, $content);

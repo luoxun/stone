@@ -1,5 +1,5 @@
 <?php
-namespace Stone;
+namespace Qufenqi\Stone;
 
 use Exception;
 

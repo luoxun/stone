@@ -1,8 +1,8 @@
 <?php
-namespace Stone\FastCGI;
+namespace Qufenqi\Stone\FastCGI;
 
-use Stone\FastCGI\Exception as FastCGIException;
-use Stone\FastCGI\Connection as Connection;
+use Qufenqi\Stone\FastCGI\Exception as FastCGIException;
+use Qufenqi\Stone\FastCGI\Connection as Connection;
 
 class Protocol
 {
