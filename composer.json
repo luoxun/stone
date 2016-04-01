@@ -1,10 +1,18 @@
 {
     "name": "qufenqi/stone",
-    "description": "FastCGI server base on swoole.",
+    "type": "library",
+    "keywords": ["swoole", "laravel", "qufenqi", "fastcgi"],
+    "description": "High performance FastCGI server base on swoole.",
     "require": {
-        "ext-swoole": "1.6.0"
+        "ext-swoole": ">=1.5.0"
     },
     "license": "MIT",
+    "autoload": {
+        "classmap": [
+            "src"
+        ]
+    },
+    "minimum-stability": "dev",
     "authors": [
         {
             "name": "chunfang",
