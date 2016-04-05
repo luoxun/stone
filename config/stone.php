@@ -9,9 +9,9 @@ return [
 
     'daemonize' => true,
 
-    'user' => 'apple',
+    'user' => 'www',
 
-    'group' => 'apple',
+    'group' => 'www',
 
     'chroot' => '',
 

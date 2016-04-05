@@ -30,16 +30,24 @@ class Server
 
         $config = $this->config;
         $serv = new swoole_server($config['ip'], $config['port'], SWOOLE_PROCESS, SWOOLE_SOCK_TCP);
-        $serv->set(array(
+        $options = array(
             'worker_num' => $config['worker_num'],
             'task_worker_num' => $config['task_worker_num'],
             'daemonize' => $config['daemonize'],
-            'user' => $config['user'],
-            'group' => $config['group'],
             'open_eof_check' => $config['open_eof_check'],
             'package_eof' => $config['package_eof'],
             'log_file' => $config['log_file'],
-        ));
+        );
+
+        if (!empty($config['user'])) {
+            $options['user'] = $config['user'];
+        }
+
+        if (!empty($config['group'])) {
+            $options['group'] = $config['group'];
+        }
+
+        $serv->set($options);
 
         $serv->on('Start', [$this, 'onStart']);
         $serv->on('Connect', [$this, 'onConnect']);

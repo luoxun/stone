@@ -4,7 +4,8 @@
     "keywords": ["swoole", "laravel", "qufenqi", "fastcgi"],
     "description": "High performance FastCGI server base on swoole.",
     "require": {
-        "ext-swoole": ">=1.5.0"
+        "ext-swoole": ">=1.5.0",
+        "laravel/framework": ">=5.0.1"
     },
     "license": "MIT",
     "autoload": {
