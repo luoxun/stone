@@ -1,4 +1,4 @@
-<?php namespace Quefenqi\Stone\Contracts;
+<?php namespace Qufenqi\Stone\Contracts;
 
 interface RequestHandler
 {

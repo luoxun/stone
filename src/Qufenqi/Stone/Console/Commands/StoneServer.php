@@ -3,6 +3,7 @@
 namespace Qufenqi\Stone\Console\Commands;
 
 use Illuminate\Console\Command;
+use Qufenqi\Stone\FastCGI\Server;
 use Config;
 use App;
 
@@ -13,7 +14,7 @@ class StoneServer extends Command
      *
      * @var string
      */
-    protected $signature = 'stone:server';
+    protected $signature = 'stone:server {--debug} {--start} {--reload} {--stop}';
 
     /**
      * The console command description.
@@ -41,7 +42,7 @@ class StoneServer extends Command
     {
         //
         try {
-            $config = Config::get('stone.server');
+            $config = Config::get('stone');
             if ($this->option('debug')) {
                 $config['daemonize'] = false;
             }

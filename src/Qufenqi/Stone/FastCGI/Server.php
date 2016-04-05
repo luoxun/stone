@@ -6,6 +6,7 @@ use swoole_server;
 use Qufenqi\Stone\FastCGI\Protocol as FastCGI;
 use Qufenqi\Stone\FastCGI\Connection as FastCGIConnection;
 use Qufenqi\Stone\Contracts\RequestHandler as RequestHandler;
+use Log;
 
 class Server
 {
@@ -176,12 +177,14 @@ class Server
 
         try {
             $content = $this->handler->process($_SERVER['REQUEST_URI'], $_GET);
+            $content = "Server:stone\r\nContent-Type:text/html;charset=utf-8\r\n\r\n" . $content;
         } catch (Exception $e) {
             $content = "\n\r\n\r" . $e->getMessage();
         }
 
         $fastCGI->sendDataToClient(1, $content);
         $server->close($fd);
+
         return;
     }
 
