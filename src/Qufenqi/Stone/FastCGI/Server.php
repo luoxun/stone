@@ -149,6 +149,8 @@ class Server
     {
         opcache_reset();
 
+        $this->handler->onWorkerStart();
+
         if ($worker_id >= $server->setting['worker_num']) {
             swoole_set_process_name($this->config['process_name'] . ':tasker');
             // $this->liveCheck($server);
