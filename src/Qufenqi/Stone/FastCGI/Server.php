@@ -169,6 +169,10 @@ class Server
             parse_str($_SERVER['QUERY_STRING'], $_GET);
         }
 
+        if (!empty($request['rawPost'])) {
+            parse_str($request['rawPost'], $_POST);
+        }
+
         /*
         if (!empty($_SERVER['HTTP_COOKIE'])) {
             $cookies = explode('; ', $_SERVER['HTTP_COOKIE']);

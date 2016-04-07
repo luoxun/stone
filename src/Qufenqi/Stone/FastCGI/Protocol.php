@@ -116,6 +116,7 @@ class Protocol
         } elseif (self::FCGI_STDIN === $record['type']) {
             if (null !== $content) {
                 fwrite($this->requests[$requestId]['stdin'], $content);
+                $this->requests[$requestId]['rawPost'] = $content;
             } else {
                 // TODO $this->dispatchRequest($requestId);
                 return 1; // One request was dispatched
