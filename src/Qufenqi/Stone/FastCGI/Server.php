@@ -175,7 +175,6 @@ class Server
             parse_str($request['rawPost'], $_POST);
         }
 
-        /*
         if (!empty($_SERVER['HTTP_COOKIE'])) {
             $cookies = explode('; ', $_SERVER['HTTP_COOKIE']);
             foreach ($cookies as $item) {
@@ -185,12 +184,11 @@ class Server
                 }
             }
         }
-        */
 
-        //$_REQUEST = array_merge($_GET, $_POST);
+        $_REQUEST = array_merge($_GET, $_POST);
 
         try {
-            $content = $this->handler->process($_SERVER['REQUEST_URI'], $_GET);
+            $content = $this->handler->process();
             $content = "Server:stone\r\nContent-Type:text/html;charset=utf-8\r\n\r\n" . $content;
         } catch (Exception $e) {
             $content = "\n\r\n\r" . $e->getMessage();

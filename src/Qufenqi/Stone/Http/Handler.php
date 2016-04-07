@@ -13,7 +13,7 @@ class Handler implements RequestHandler
         $this->laravel_path = $laravel_path;
     }
 
-    public function process($url, $params = [])
+    public function process()
     {
         ob_start();
         $response = $this->kernel->handle(

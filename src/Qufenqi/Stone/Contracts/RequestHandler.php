@@ -2,6 +2,6 @@
 
 interface RequestHandler
 {
-    public function process($url, $params = []);
+    public function process();
     public function onWorkerStart();
 }
