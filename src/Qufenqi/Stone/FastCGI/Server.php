@@ -29,7 +29,14 @@ class Server
         }
 
         $config = $this->config;
-        $serv = new swoole_server($config['ip'], $config['port'], SWOOLE_PROCESS, SWOOLE_SOCK_TCP);
+
+        if ($config['domain'][0] == '/') {
+            $type = SWOOLE_SOCK_UNIX_STREAM;
+        } else {
+            $type = SWOOLE_SOCK_TCP;
+        }
+
+        $serv = new swoole_server($config['domain'], $config['port'], SWOOLE_PROCESS, $type);
         $options = array(
             'worker_num' => $config['worker_num'],
             'task_worker_num' => $config['task_worker_num'],
@@ -142,6 +149,9 @@ class Server
     public function onManagerStart(swoole_server $server)
     {
         swoole_set_process_name($this->config['process_name'] . ':manager');
+        if ($this->config['domain'][0] == '/') {
+            chown($this->config['domain'], $this->config['user']);
+        }
     }
 
 
@@ -172,6 +182,7 @@ class Server
         }
 
         if (!empty($request['rawPost'])) {
+            $_SERVER['HTTP_RAW_POST'] = $request['rawPost'];
             parse_str($request['rawPost'], $_POST);
         }
 
